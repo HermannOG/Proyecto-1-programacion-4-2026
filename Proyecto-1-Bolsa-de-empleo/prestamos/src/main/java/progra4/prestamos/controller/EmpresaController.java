@@ -40,8 +40,12 @@ public class EmpresaController {
 
     @PostMapping("/puestos/nuevo")
     public String guardarPuesto(@ModelAttribute Puesto puesto,
-                                @RequestParam List<Integer> caracIds,
-                                @RequestParam List<Integer> niveles) {
+                                @RequestParam(value = "caracIds", required = false)
+                                List<Integer> caracIds,
+                                @RequestParam(value = "niveles", required = false)
+                                List<Integer> niveles) {
+        if (caracIds == null) caracIds = new java.util.ArrayList<>();
+        if (niveles == null)  niveles  = new java.util.ArrayList<>();
         puestoService.publicar(puesto, caracIds, niveles);
         return "redirect:/empresa/puestos";
     }

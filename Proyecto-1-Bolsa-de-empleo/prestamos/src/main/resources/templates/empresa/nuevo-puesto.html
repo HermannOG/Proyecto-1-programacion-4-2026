@@ -66,16 +66,11 @@
             <div class="form-group">
                 <label style="margin-bottom:10px;">Características requeridas</label>
 
-                <!-- Filas dinámicas: usamos múltiples inputs indexados -->
-                <!-- NOTA: en producción se puede usar JS para agregar dinámicamente.
-                     Como el proyecto prohíbe JS en las vistas, se pre-renderizan
-                     10 filas vacías y el backend ignora las vacías. -->
                 <div id="reqs-container">
                     <th:block th:each="i : ${#numbers.sequence(0,9)}">
                         <div class="req-row" th:id="'req-row-'+${i}"
                              th:style="${i > 0} ? 'display:none' : ''">
-                            <select class="form-control"
-                                    th:name="'caracIds[' + ${i} + ']'">
+                            <select class="form-control" name="caracIds">
                                 <option value="">– Característica –</option>
                                 <option th:each="c : ${caracteristicas}"
                                         th:if="${c.hijos == null or c.hijos.isEmpty()}"
@@ -83,7 +78,7 @@
                                         th:text="${c.nombre}">Característica</option>
                             </select>
                             <input type="number" class="form-control"
-                                   th:name="'niveles[' + ${i} + ']'"
+                                   name="niveles"
                                    min="1" max="5" value="1" placeholder="Nivel 1-5"/>
                         </div>
                     </th:block>

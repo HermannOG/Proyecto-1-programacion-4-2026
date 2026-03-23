@@ -17,10 +17,21 @@ public class EmpresaService {
     private final PasswordEncoder encoder;
 
     public void registrar(Empresa e) {
+        if (e.getCorreo() != null) {
+            e.setCorreo(e.getCorreo().trim().toLowerCase());
+        }
+        if (e.getClave() == null || e.getClave().trim().length() < 8) {
+            throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres.");
+        }
+
         if (empresaRepo.existsByCorreo(e.getCorreo())) {
             throw new IllegalArgumentException("Ya existe una empresa registrada con ese correo.");
         }
+
         e.setClave(encoder.encode(e.getClave()));
+        e.setAprobada(false);
+        e.setActiva(true);
+
         empresaRepo.save(e);
     }
 

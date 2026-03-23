@@ -4,8 +4,8 @@ import progra4.prestamos.model.*;
 import progra4.prestamos.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,13 +28,27 @@ public class OferenteService {
     private String uploadDir;
 
     public void registrar(Oferente o) {
+        if (o.getCorreo() != null) {
+            o.setCorreo(o.getCorreo().trim().toLowerCase());
+        }
+        if (o.getIdentificacion() != null) {
+            o.setIdentificacion(o.getIdentificacion().trim());
+        }
+        if (o.getClave() == null || o.getClave().trim().length() < 8) {
+            throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres.");
+        }
+
         if (oferenteRepo.existsByCorreo(o.getCorreo())) {
             throw new IllegalArgumentException("Ya existe un oferente con ese correo.");
         }
         if (oferenteRepo.existsByIdentificacion(o.getIdentificacion())) {
             throw new IllegalArgumentException("Ya existe un oferente con esa identificación.");
         }
+
         o.setClave(encoder.encode(o.getClave()));
+        o.setAprobado(false);
+        o.setActivo(true);
+
         oferenteRepo.save(o);
     }
 
@@ -94,7 +108,9 @@ public class OferenteService {
         Puesto puesto = puestoRepo.findById(puestoId).orElseThrow();
         List<PuestoCaracteristica> requisitos = puesto.getCaracteristicas();
         List<Oferente> todos = oferenteRepo.findAll().stream()
-                .filter(Oferente::getAprobado).toList();
+                .filter(Oferente::getAprobado)
+                .filter(Oferente::getActivo)
+                .toList();
 
         List<Map<String, Object>> resultado = new ArrayList<>();
         for (Oferente o : todos) {
@@ -121,6 +137,6 @@ public class OferenteService {
 
     private Oferente oferenteActual() {
         String correo = SecurityContextHolder.getContext().getAuthentication().getName();
-        return oferenteRepo.findByCorreo(correo).orElseThrow();
+        return oferenteRepo.findByCorreo(correo.trim().toLowerCase()).orElseThrow();
     }
 }
