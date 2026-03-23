@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <title>BolsaEmpleo – Detalle del Puesto</title>
+    <th:block th:replace="~{fragments/layout :: globalStyles}"/>
+    <style>
+        .detalle-box { max-width: 720px; margin-bottom: 24px; }
+        .empresa-label {
+            font-size: 12px; font-weight: 600; color: var(--muted);
+            text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px;
+        }
+        .puesto-titulo  { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
+        .puesto-salario {
+            font-size: 20px; font-weight: 700;
+            font-family: 'DM Mono', monospace;
+            color: var(--accent); margin-bottom: 20px;
+        }
+        .meta-row   { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+        .meta-item  { font-size: 13px; color: var(--text-sm); }
+        .meta-item strong { color: var(--text); }
+        .section-title {
+            font-size: 15px; font-weight: 700;
+            margin-bottom: 14px; padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .req-list   { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+        .req-item   {
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: 20px; padding: 5px 14px;
+            font-size: 13px; display: flex; align-items: center; gap: 6px;
+        }
+        .nivel-badge {
+            background: var(--accent); color: #fff;
+            font-size: 11px; font-weight: 700;
+            padding: 1px 7px; border-radius: 10px;
+        }
+        .apply-box  {
+            margin-top: 28px; padding-top: 24px;
+            border-top: 1px solid var(--border);
+            display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+        }
+        .btn-apply  {
+            padding: 10px 28px; font-size: 15px;
+            font-weight: 600; background: var(--accent);
+            color: #fff; border: none; border-radius: var(--radius);
+            cursor: pointer; font-family: inherit;
+            transition: background .15s;
+        }
+        .btn-apply:hover { background: var(--accent-h); }
+        .apply-note { font-size: 12px; color: var(--muted); }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{fragments/layout :: navbar}"/>
+<main>
+    <h1 class="page-title">Detalle del puesto</h1>
+
+    <!-- ===== Alertas ===== -->
+    <div class="alert alert-success"
+         th:if="${param.aplicacionOk}">
+        ✅ ¡Aplicación enviada con éxito! La empresa revisará tu perfil.
+    </div>
+    <div class="alert alert-danger"
+         th:if="${param.yaAplico}">
+        ⚠️ Ya habías aplicado a este puesto anteriormente.
+    </div>
+    <div class="alert alert-success"
+         th:if="${param.aplicar}">
+        Inicia sesión como oferente para completar tu aplicación.
+    </div>
+
+    <div class="card detalle-box">
+
+        <div class="empresa-label" th:text="${puesto.empresa.nombre}">Empresa</div>
+        <div class="puesto-titulo"  th:text="${puesto.descripcion}">Descripción</div>
+        <div class="puesto-salario">
+            &#8364;
+            <span th:text="${#numbers.formatDecimal(puesto.salario,1,'COMMA',2,'POINT')}">0,00</span>
+        </div>
+
+        <div class="meta-row">
+            <div class="meta-item">
+                <strong>Tipo:</strong>
+                <span th:text="${puesto.esPublico ? 'Público' : 'Privado'}">Público</span>
+            </div>
+            <div class="meta-item">
+                <strong>Estado:</strong>
+                <span th:if="${puesto.activo}"   class="badge badge-green">Activo</span>
+                <span th:unless="${puesto.activo}" class="badge badge-red">Inactivo</span>
+            </div>
+            <div class="meta-item">
+                <strong>Publicado:</strong>
+                <span th:text="${#temporals.format(puesto.fechaRegistro,'dd/MM/yyyy')}">—</span>
+            </div>
+            <div class="meta-item">
+                <strong>Localización:</strong>
+                <span th:text="${puesto.empresa.localizacion != null
+                                 ? puesto.empresa.localizacion : '—'}">—</span>
+            </div>
+        </div>
+
+        <!-- Características requeridas -->
+        <div class="section-title">Características requeridas</div>
+        <ul class="req-list"
+            th:if="${puesto.caracteristicas != null and !puesto.caracteristicas.isEmpty()}">
+            <li class="req-item" th:each="c : ${puesto.caracteristicas}">
+                <span th:text="${c.caracteristica.nombre}">Habilidad</span>
+                <span class="nivel-badge">
+                    Nv. <span th:text="${c.nivelRequerido}">1</span>
+                </span>
+            </li>
+        </ul>
+        <p style="color:var(--muted);font-size:13px;"
+           th:if="${puesto.caracteristicas == null or puesto.caracteristicas.isEmpty()}">
+            Sin requisitos específicos.
+        </p>
+
+        <!-- ===== Zona de aplicación ===== -->
+        <div class="apply-box" th:if="${puesto.activo}">
+
+            <!-- Caso 1: Ya aplicó -->
+            <th:block th:if="${yaAplico}">
+                <span class="badge badge-green" style="font-size:13px;padding:7px 16px;">
+                    ✓ Ya aplicaste a este puesto
+                </span>
+                <a th:href="@{/oferente/aplicaciones}" class="btn btn-outline">
+                    Ver mis aplicaciones
+                </a>
+            </th:block>
+
+            <!-- Caso 2: No aplicó -->
+            <th:block th:unless="${yaAplico}">
+
+                <!-- Autenticado como oferente: botón directo -->
+                <th:block sec:authorize="hasRole('OFERENTE')">
+                    <form th:action="@{/puestos/{id}/aplicar(id=${puesto.id})}"
+                          method="post">
+                        <button type="submit" class="btn-apply">
+                            Aplicar a este puesto
+                        </button>
+                    </form>
+                    <span class="apply-note">
+                        Tu perfil y CV serán enviados a la empresa.
+                    </span>
+                </th:block>
+
+                <!-- No autenticado o rol distinto: redirigir a login -->
+                <th:block sec:authorize="!hasRole('OFERENTE')">
+                    <form th:action="@{/puestos/{id}/aplicar(id=${puesto.id})}"
+                          method="post">
+                        <button type="submit" class="btn-apply">
+                            Aplicar a este puesto
+                        </button>
+                    </form>
+                    <span class="apply-note">
+                        Se te pedirá iniciar sesión como oferente.
+                    </span>
+                </th:block>
+
+            </th:block>
+        </div>
+
+        <!-- Puesto inactivo -->
+        <div class="apply-box" th:unless="${puesto.activo}">
+            <span style="color:var(--muted);font-size:13px;">
+                Este puesto ya no está disponible para aplicaciones.
+            </span>
+        </div>
+
+    </div>
+
+    <div style="display:flex;gap:10px;">
+        <a th:href="@{/}" class="btn btn-outline">← Volver al inicio</a>
+        <a th:href="@{/puestos/buscar}" class="btn btn-outline">Ver más puestos</a>
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: footer}"/>
+</body>
+</html>

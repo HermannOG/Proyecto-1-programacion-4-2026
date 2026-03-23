@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>BolsaEmpleo – Mis Aplicaciones</title>
+    <th:block th:replace="~{fragments/layout :: globalStyles}"/>
+</head>
+<body>
+<th:block th:replace="~{fragments/layout :: navbar}"/>
+<main>
+    <h1 class="page-title">Mis aplicaciones</h1>
+    <p class="page-subtitle">Historial de puestos a los que has aplicado.</p>
+
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:20px;">
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Empresa</th>
+                <th>Puesto</th>
+                <th>Salario</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Detalle</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="a : ${aplicaciones}">
+                <td th:text="${a.puesto.empresa.nombre}">Empresa</td>
+                <td th:text="${a.puesto.descripcion}">Puesto</td>
+                <td style="font-family:'DM Mono',monospace;"
+                    th:text="${a.puesto.salario}">0.00</td>
+                <td th:text="${#temporals.format(a.fechaAplicacion,'dd/MM/yyyy')}">—</td>
+                <td>
+                    <span class="badge badge-green"
+                          th:if="${a.estado.name() == 'PENDIENTE'}">Pendiente</span>
+                    <span class="badge"
+                          style="background:#dbeafe;color:#1e40af;"
+                          th:if="${a.estado.name() == 'REVISADO'}">Revisado</span>
+                    <span class="badge badge-red"
+                          th:if="${a.estado.name() == 'RECHAZADO'}">Rechazado</span>
+                </td>
+                <td>
+                    <a th:href="@{/puestos/{id}(id=${a.puesto.id})}"
+                       class="btn btn-primary btn-sm">Ver</a>
+                </td>
+            </tr>
+            <tr th:if="${aplicaciones == null or aplicaciones.isEmpty()}">
+                <td colspan="6"
+                    style="text-align:center;color:var(--muted);padding:24px;">
+                    Aún no has aplicado a ningún puesto.
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <a th:href="@{/oferente/dashboard}" class="btn btn-outline">← Volver al Dashboard</a>
+</main>
+<th:block th:replace="~{fragments/layout :: footer}"/>
+</body>
+</html>
