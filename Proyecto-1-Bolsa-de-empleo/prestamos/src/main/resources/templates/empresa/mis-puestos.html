@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>BolsaEmpleo – Mis puestos</title>
+    <th:block th:replace="~{fragments/layout :: globalStyles}"/>
+</head>
+<body>
+<th:block th:replace="~{fragments/layout :: navbar}"/>
+<main>
+    <h1 class="page-title">Mis puestos</h1>
+
+    <div style="margin-bottom:16px;">
+        <a th:href="@{/empresa/puestos/nuevo}" class="btn btn-primary btn-sm">Publicar puesto</a>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden;">
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Descripción</th>
+                <th>Salario</th>
+                <th>Activo</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${puestos}">
+                <td th:text="${p.id}">1</td>
+                <td th:text="${p.descripcion}">Descripción</td>
+                <td style="font-family:'DM Mono',monospace;" th:text="${p.salario}">0.0</td>
+                <td>
+                    <span th:if="${p.activo}"  class="badge badge-green">Sí</span>
+                    <span th:unless="${p.activo}" class="badge badge-red">No</span>
+                </td>
+                <td>
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <!-- Desactivar -->
+                        <form th:if="${p.activo}"
+                              th:action="@{/empresa/puestos/{id}/desactivar(id=${p.id})}"
+                              method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Desactivar</button>
+                        </form>
+                        <!-- Buscar candidatos -->
+                        <a th:href="@{/empresa/candidatos/buscar(puestoId=${p.id})}"
+                           class="btn btn-primary btn-sm">Buscar candidatos</a>
+                    </div>
+                </td>
+            </tr>
+            <tr th:if="${puestos == null or puestos.isEmpty()}">
+                <td colspan="5" style="text-align:center;color:var(--muted);padding:24px;">
+                    No tienes puestos publicados aún.
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: footer}"/>
+</body>
+</html>

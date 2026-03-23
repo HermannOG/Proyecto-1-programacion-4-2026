@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>BolsaEmpleo – Registro Empresa</title>
+    <th:block th:replace="~{fragments/layout :: globalStyles}"/>
+    <style>
+        .reg-wrapper { max-width: 560px; margin: 0 auto; }
+        .reg-wrapper .card { padding: 28px 32px; }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{fragments/layout :: navbar}"/>
+<main>
+    <div class="reg-wrapper">
+        <h1 class="page-title">Registro de Empresa</h1>
+        <p class="page-subtitle">Complete el formulario. Un administrador aprobará su cuenta.</p>
+        <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+        <div class="card">
+            <form th:action="@{/registro/empresa}" method="post" th:object="${empresa}">
+                <div class="form-group">
+                    <label>Nombre de la empresa</label>
+                    <input type="text" class="form-control" th:field="*{nombre}" required placeholder="Ej. Tech Solutions S.A."/>
+                </div>
+                <div class="form-group">
+                    <label>Localización</label>
+                    <input type="text" class="form-control" th:field="*{localizacion}" placeholder="Ej. San José, Costa Rica"/>
+                </div>
+                <div class="form-group">
+                    <label>Correo electrónico</label>
+                    <input type="email" class="form-control" th:field="*{correo}" required placeholder="empresa@ejemplo.com"/>
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="text" class="form-control" th:field="*{telefono}" placeholder="2222-3333"/>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea class="form-control" th:field="*{descripcion}" rows="3"
+                              placeholder="Breve descripción de la empresa"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" class="form-control" name="clave" required placeholder="Mínimo 8 caracteres"/>
+                </div>
+                <div style="display:flex;gap:10px;margin-top:8px;">
+                    <button type="submit" class="btn btn-primary">Registrarse</button>
+                    <a th:href="@{/}" class="btn btn-outline">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: footer}"/>
+</body>
+</html>

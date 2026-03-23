@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>BolsaEmpleo – Características</title>
+    <th:block th:replace="~{fragments/layout :: globalStyles}"/>
+    <style>
+        .carac-layout {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        /* ===== Ruta (breadcrumb) ===== */
+        .ruta-box { margin-bottom: 16px; }
+        .ruta-label { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+        .ruta-crumbs { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .ruta-crumb {
+            background: var(--navbar);
+            color: #e8eaf2;
+            font-size: 12px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            text-decoration: none;
+        }
+        .ruta-crumb:hover { background: #2d3554; }
+        .ruta-sep { color: var(--muted); font-size: 12px; }
+
+        /* ===== Lista de nodos ===== */
+        .cat-list { list-style: none; padding: 0; }
+        .cat-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 11px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13.5px;
+        }
+        .cat-item:last-child { border-bottom: none; }
+        .cat-name { font-weight: 500; color: var(--text-sm); }
+        .cat-actions { display: flex; gap: 6px; }
+
+        /* ===== Panel agregar ===== */
+        .add-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 22px;
+        }
+        .add-panel h3 { font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{fragments/layout :: navbar}"/>
+<main>
+    <h1 class="page-title">Características</h1>
+
+    <div class="carac-layout">
+
+        <!-- Columna izquierda: navegación jerárquica -->
+        <div>
+            <!-- Breadcrumb -->
+            <div class="ruta-box">
+                <div class="ruta-label">Ruta:</div>
+                <div class="ruta-crumbs">
+                    <a th:href="@{/admin/caracteristicas}" class="ruta-crumb">Raíces</a>
+                    <th:block th:if="${actual != null}">
+                        <th:block th:each="a : ${ancestros}">
+                            <span class="ruta-sep">/</span>
+                            <a th:href="@{/admin/caracteristicas(actualId=${a.id})}"
+                               class="ruta-crumb" th:text="${a.nombre}">Padre</a>
+                        </th:block>
+                        <span class="ruta-sep">/</span>
+                        <span class="ruta-crumb" style="background:var(--accent);"
+                              th:text="${actual.nombre}">Actual</span>
+                    </th:block>
+                </div>
+
+                <p style="font-size:13px;color:var(--muted);margin-top:8px;">
+                    <span th:if="${actual == null}">Categorías: raíces</span>
+                    <span th:if="${actual != null}">Subcategorías de:
+            <strong th:text="${actual.nombre}">Categoría</strong>
+          </span>
+                </p>
+            </div>
+
+            <!-- Lista de categorías/subcategorías -->
+            <div class="card" style="padding:0;overflow:hidden;">
+                <ul class="cat-list">
+                    <!-- Raíces -->
+                    <th:block th:if="${actual == null}">
+                        <li class="cat-item" th:each="c : ${raices}">
+                            <span class="cat-name" th:text="${c.nombre}">Categoría</span>
+                            <div class="cat-actions">
+                                <a th:href="@{/admin/caracteristicas(actualId=${c.id})}"
+                                   class="btn btn-primary btn-sm">Entrar</a>
+                            </div>
+                        </li>
+                        <li th:if="${raices == null or raices.isEmpty()}"
+                            style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">
+                            No hay categorías raíz aún.
+                        </li>
+                    </th:block>
+
+                    <!-- Hijos del nodo actual -->
+                    <th:block th:if="${actual != null}">
+                        <li class="cat-item" th:each="c : ${actual.hijos}">
+                            <span class="cat-name" th:text="${c.nombre}">Sub</span>
+                            <div class="cat-actions">
+                                <a th:if="${c.hijos != null and !c.hijos.isEmpty()}"
+                                   th:href="@{/admin/caracteristicas(actualId=${c.id})}"
+                                   class="btn btn-primary btn-sm">Entrar</a>
+                            </div>
+                        </li>
+                        <li th:if="${actual.hijos == null or actual.hijos.isEmpty()}"
+                            style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">
+                            No hay subcategorías. Agrega una desde el panel derecho.
+                        </li>
+                    </th:block>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Columna derecha: formulario agregar -->
+        <div class="add-panel">
+            <h3>Agregar Característica</h3>
+            <form th:action="@{/admin/caracteristicas}" method="post">
+                <input type="hidden" name="actualId"
+                       th:value="${actual != null ? actual.id : null}"/>
+
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" class="form-control" name="nombre" required
+                           placeholder="Ej. Python, Docker…"/>
+                </div>
+
+                <div class="form-group">
+                    <label>Padre</label>
+                    <select class="form-control" name="padreId">
+                        <option value="">(sin padre)</option>
+                        <!-- Raíces -->
+                        <option th:each="r : ${raices}"
+                                th:value="${r.id}"
+                                th:text="${r.nombre}"
+                                th:selected="${actual != null and actual.padre == null and actual.id == r.id}">
+                            Raíz
+                        </option>
+                        <!-- Si tenemos actual, mostrar también sus ancestros y él mismo -->
+                        <th:block th:if="${actual != null}">
+                            <option th:value="${actual.id}"
+                                    th:text="${actual.nombre}"
+                                    selected="selected">
+                                Actual
+                            </option>
+                        </th:block>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width:100%;">Crear</button>
+            </form>
+        </div>
+
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: footer}"/>
+</body>
+</html>

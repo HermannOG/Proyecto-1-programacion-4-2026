@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>BolsaEmpleo – Oferente Dashboard</title>
+    <th:block th:replace="~{fragments/layout :: globalStyles}"/>
+</head>
+<body>
+<th:block th:replace="~{fragments/layout :: navbar}"/>
+<main>
+    <h1 class="page-title">Oferente – Dashboard</h1>
+    <p class="page-subtitle">Administra tus habilidades y tu CV.</p>
+    <div style="display:flex;gap:12px;">
+        <a th:href="@{/oferente/habilidades}" class="btn btn-primary">Mis habilidades</a>
+        <a th:href="@{/oferente/cv}"          class="btn btn-outline">Mi CV</a>
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: footer}"/>
+</body>
+</html>

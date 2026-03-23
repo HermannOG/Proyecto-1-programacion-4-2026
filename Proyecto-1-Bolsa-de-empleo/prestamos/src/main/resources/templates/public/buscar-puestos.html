@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>BolsaEmpleo – Buscar puestos</title>
+    <th:block th:replace="~{fragments/layout :: globalStyles}"/>
+    <style>
+        /* ===== TREE CHECKBOXES (CSS puro) ===== */
+        .tree { font-size: 13.5px; line-height: 1.9; }
+        .tree ul { list-style: none; padding-left: 18px; }
+        .tree > ul { padding-left: 0; }
+        .tree li { position: relative; }
+
+        /* Expand/collapse sin JS usando checkbox oculto */
+        .tree input[type="checkbox"].toggle { display: none; }
+        .tree .toggle-label {
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--accent);
+            margin-right: 4px;
+            user-select: none;
+        }
+        .tree .node-children { display: block; }
+
+        .tree input[type="checkbox"].select-cb { margin-right: 6px; accent-color: var(--accent); }
+        .tree .node-name { color: var(--text-sm); }
+        .tree .parent-name { font-weight: 600; color: var(--text); }
+
+        /* ===== RESULTS ===== */
+        .result-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+        }
+        .result-card .rc-empresa { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing:.4px; margin-bottom:3px; }
+        .result-card .rc-titulo  { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+        .result-card .rc-salario { font-size: 14px; font-family: 'DM Mono', monospace; font-weight:600; }
+
+        .two-col { display: grid; grid-template-columns: 340px 1fr; gap: 24px; align-items: start; }
+        .section-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+        .btn-row { display: flex; gap: 8px; margin-top: 16px; }
+        .empty { color: var(--muted); font-size: 14px; }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{fragments/layout :: navbar}"/>
+
+<main>
+    <h1 class="page-title">Buscar puestos</h1>
+
+    <form th:action="@{/puestos/buscar}" method="post">
+        <div class="two-col">
+
+            <!-- Panel izquierdo: árbol de características -->
+            <div class="card">
+                <div class="section-title">Buscar puestos por características</div>
+                <div class="tree">
+                    <ul>
+                        <li th:each="raiz : ${caracteristicas}" th:if="${raiz.padre == null}">
+                            <th:block th:if="${raiz.hijos != null and !raiz.hijos.isEmpty()}">
+                                <!-- Nodo padre: no se puede seleccionar, solo navegar visualmente -->
+                                <span class="parent-name" th:text="${raiz.nombre}">Categoría</span>
+                                <ul>
+                                    <li th:each="hijo : ${raiz.hijos}">
+                                        <th:block th:if="${hijo.hijos != null and !hijo.hijos.isEmpty()}">
+                                            <span class="parent-name" th:text="${hijo.nombre}">Subcategoría</span>
+                                            <ul>
+                                                <li th:each="nieto : ${hijo.hijos}">
+                                                    <label>
+                                                        <input type="checkbox" class="select-cb"
+                                                               name="caracteristicaIds"
+                                                               th:value="${nieto.id}"
+                                                               th:checked="${selectedIds != null and selectedIds.contains(nieto.id)}"/>
+                                                        <span class="node-name" th:text="${nieto.nombre}">Leaf</span>
+                                                    </label>
+                                                </li>
+                                            </ul>
+                                        </th:block>
+                                        <th:block th:if="${hijo.hijos == null or hijo.hijos.isEmpty()}">
+                                            <label>
+                                                <input type="checkbox" class="select-cb"
+                                                       name="caracteristicaIds"
+                                                       th:value="${hijo.id}"
+                                                       th:checked="${selectedIds != null and selectedIds.contains(hijo.id)}"/>
+                                                <span class="node-name" th:text="${hijo.nombre}">Hoja</span>
+                                            </label>
+                                        </th:block>
+                                    </li>
+                                </ul>
+                            </th:block>
+                            <th:block th:if="${raiz.hijos == null or raiz.hijos.isEmpty()}">
+                                <label>
+                                    <input type="checkbox" class="select-cb"
+                                           name="caracteristicaIds"
+                                           th:value="${raiz.id}"
+                                           th:checked="${selectedIds != null and selectedIds.contains(raiz.id)}"/>
+                                    <span class="node-name" th:text="${raiz.nombre}">Hoja</span>
+                                </label>
+                            </th:block>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="btn-row">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                    <a th:href="@{/puestos/buscar}" class="btn btn-outline">Limpiar</a>
+                </div>
+            </div>
+
+            <!-- Panel derecho: resultados -->
+            <div>
+                <th:block th:if="${resultados != null}">
+                    <div class="section-title">Resultados</div>
+
+                    <th:block th:if="${resultados.isEmpty()}">
+                        <p class="empty">No se encontraron puestos con esas características.</p>
+                    </th:block>
+
+                    <div class="result-card" th:each="p : ${resultados}">
+                        <div class="rc-empresa" th:text="${p.empresa.nombre}">Empresa</div>
+                        <div class="rc-titulo"  th:text="${p.descripcion}">Puesto</div>
+                        <div class="rc-salario">Salario: <span th:text="${p.salario}">0</span></div>
+                    </div>
+                </th:block>
+
+                <th:block th:if="${resultados == null}">
+                    <p class="empty" style="padding-top:40px;">Selecciona características y presiona <strong>Buscar</strong>.</p>
+                </th:block>
+            </div>
+
+        </div>
+    </form>
+</main>
+
+<th:block th:replace="~{fragments/layout :: footer}"/>
+</body>
+</html>

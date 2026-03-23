@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>BolsaEmpleo – Detalle Candidato</title>
+    <th:block th:replace="~{fragments/layout :: globalStyles}"/>
+    <style>
+        .detail-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            margin-bottom: 20px;
+        }
+        .detail-name { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+        .detail-meta p { font-size: 13.5px; margin-bottom: 4px; color: var(--text-sm); }
+        .detail-meta strong { color: var(--text); }
+        .skills-title { font-size: 15px; font-weight: 700; margin: 20px 0 12px; }
+        .cv-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--accent);
+            text-decoration: none;
+            margin-top: 4px;
+        }
+        .cv-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{fragments/layout :: navbar}"/>
+<main>
+    <h1 class="page-title">Detalle de oferente</h1>
+
+    <div class="detail-box">
+        <div class="detail-name" th:text="${oferente.nombre + ' ' + oferente.primerApellido}">Nombre</div>
+        <div class="detail-meta">
+            <p><strong>Identificación:</strong> <span th:text="${oferente.identificacion}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${oferente.correo}"></span></p>
+            <p><strong>Teléfono:</strong> <span th:text="${oferente.telefono}"></span></p>
+            <p><strong>Residencia:</strong> <span th:text="${oferente.residencia}"></span></p>
+        </div>
+
+        <!-- CV -->
+        <th:block th:if="${oferente.curriculumPdf != null}">
+            <a th:href="@{/curriculos/{file}(file=${oferente.curriculumPdf})}"
+               target="_blank" class="cv-link">
+                📄 Ver currículo (PDF)
+            </a>
+        </th:block>
+
+        <!-- Habilidades -->
+        <div class="skills-title">Habilidades</div>
+        <div class="card" style="padding:0;overflow:hidden;">
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>Característica</th>
+                    <th style="width:100px;text-align:right;">Nivel</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="h : ${oferente.habilidades}">
+                    <td th:text="${h.caracteristica.nombre}">Característica</td>
+                    <td style="text-align:right;font-family:'DM Mono',monospace;" th:text="${h.nivel}">3</td>
+                </tr>
+                <tr th:if="${oferente.habilidades == null or oferente.habilidades.isEmpty()}">
+                    <td colspan="2" style="text-align:center;color:var(--muted);padding:20px;">
+                        Sin habilidades registradas.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <a th:href="@{javascript:history.back()}" class="btn btn-outline">Volver</a>
+</main>
+<th:block th:replace="~{fragments/layout :: footer}"/>
+</body>
+</html>

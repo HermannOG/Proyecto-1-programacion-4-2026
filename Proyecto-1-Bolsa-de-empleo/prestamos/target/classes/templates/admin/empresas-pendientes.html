@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>BolsaEmpleo – Empresas Pendientes</title>
+    <th:block th:replace="~{fragments/layout :: globalStyles}"/>
+</head>
+<body>
+<th:block th:replace="~{fragments/layout :: navbar}"/>
+<main>
+    <h1 class="page-title">Empresas pendientes</h1>
+
+    <div class="card" style="padding:0;overflow:hidden;">
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Acción</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="e : ${empresas}">
+                <td th:text="${e.correo}">correo@empresa.com</td>
+                <td th:text="${e.nombre}">Empresa</td>
+                <td th:text="${e.telefono}">—</td>
+                <td>
+                    <form th:action="@{/admin/empresas/{id}/aprobar(id=${e.id})}" method="post">
+                        <button type="submit" class="btn btn-success btn-sm">Aprobar y generar clave</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${empresas == null or empresas.isEmpty()}">
+                <td colspan="4" style="text-align:center;color:var(--muted);padding:24px;">
+                    No hay empresas pendientes de aprobación.
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: footer}"/>
+</body>
+</html>

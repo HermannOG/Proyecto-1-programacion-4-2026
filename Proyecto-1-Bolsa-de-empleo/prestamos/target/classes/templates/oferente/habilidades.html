@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>BolsaEmpleo – Mis Habilidades</title>
+    <th:block th:replace="~{fragments/layout :: globalStyles}"/>
+    <style>
+        .hab-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr 300px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        /* ===== Tabla de habilidades ===== */
+        .section-label { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+
+        /* ===== Ruta (breadcrumb) ===== */
+        .ruta-box { margin-bottom: 14px; }
+        .ruta-label { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+        .ruta-crumbs { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+        .ruta-crumb {
+            background: var(--navbar);
+            color: #e8eaf2;
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            text-decoration: none;
+        }
+        .ruta-sep { color: var(--muted); font-size: 12px; }
+
+        /* ===== Árbol navegable ===== */
+        .tree-nav .node-list { list-style: none; padding: 0; }
+        .tree-nav .node-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13.5px;
+        }
+        .tree-nav .node-item:last-child { border-bottom: none; }
+        .tree-nav .node-name { color: var(--text-sm); font-weight: 500; }
+        .tree-nav .btn-entrar {
+            font-size: 12px;
+            padding: 3px 12px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-family: inherit;
+            text-decoration: none;
+        }
+        .tree-nav .btn-entrar:hover { background: var(--accent-h); }
+
+        /* ===== Panel agregar ===== */
+        .add-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+        .add-panel h3 { font-size: 14px; font-weight: 700; margin-bottom: 14px; }
+        .nivel-input {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nivel-input input[type=number] {
+            width: 70px;
+            padding: 7px 10px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-family: inherit;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{fragments/layout :: navbar}"/>
+<main>
+    <h1 class="page-title">Mis habilidades</h1>
+
+    <div class="hab-layout">
+
+        <!-- Col 1: tabla de habilidades actuales -->
+        <div>
+            <div class="section-label">Característica</div>
+            <div class="card" style="padding:0;overflow:hidden;">
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>Característica</th>
+                        <th style="width:70px;text-align:center;">Nivel</th>
+                        <th style="width:50px;"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="h : ${habilidades}">
+                        <td th:text="${h.caracteristica.nombre}">Característica</td>
+                        <td style="text-align:center;font-family:'DM Mono',monospace;" th:text="${h.nivel}">1</td>
+                        <td>
+                            <form th:action="@{/oferente/habilidades/eliminar}" method="post">
+                                <input type="hidden" name="habilidadId" th:value="${h.id}"/>
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                        style="padding:2px 8px;font-size:11px;">✕</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${habilidades == null or habilidades.isEmpty()}">
+                        <td colspan="3" style="text-align:center;color:var(--muted);padding:18px;">
+                            Sin habilidades aún.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Col 2: árbol navegable de características -->
+        <div>
+            <!-- Breadcrumb ruta -->
+            <div class="ruta-box" th:if="${actual != null}">
+                <div class="ruta-label">Ruta:</div>
+                <div class="ruta-crumbs">
+                    <a th:href="@{/oferente/habilidades}" class="ruta-crumb">Raíces</a>
+                    <!-- Reconstruir ruta hasta el nodo actual -->
+                    <th:block th:with="ruta=${#lists.isEmpty(ancestros) ? {} : ancestros}">
+                        <th:block th:each="a : ${ancestros}">
+                            <span class="ruta-sep">/</span>
+                            <a th:href="@{/oferente/habilidades(actualId=${a.id})}"
+                               class="ruta-crumb" th:text="${a.nombre}">Padre</a>
+                        </th:block>
+                    </th:block>
+                    <span class="ruta-sep">/</span>
+                    <span class="ruta-crumb" style="background:var(--accent);"
+                          th:text="${actual.nombre}">Actual</span>
+                </div>
+                <div style="margin-top:8px;font-size:13px;color:var(--muted);">
+                    Subcategorías de: <strong th:text="${actual.nombre}">Categoría</strong>
+                </div>
+            </div>
+
+            <!-- Listado de subcategorías / hojas -->
+            <div class="card tree-nav" style="padding:0;overflow:hidden;">
+                <ul class="node-list">
+                    <!-- Si estamos en raíz, mostrar categorías raíz -->
+                    <th:block th:if="${actual == null}">
+                        <li class="node-item" th:each="c : ${caracteristicas}"
+                            th:if="${c.padre == null}">
+                            <span class="node-name" th:text="${c.nombre}">Cat</span>
+                            <a th:if="${c.hijos != null and !c.hijos.isEmpty()}"
+                               th:href="@{/oferente/habilidades(actualId=${c.id})}"
+                               class="btn-entrar">Entrar</a>
+                        </li>
+                    </th:block>
+                    <!-- Si tenemos nodo actual, mostrar sus hijos -->
+                    <th:block th:if="${actual != null}">
+                        <li class="node-item" th:each="c : ${actual.hijos}">
+                            <span class="node-name" th:text="${c.nombre}">Sub</span>
+                            <a th:if="${c.hijos != null and !c.hijos.isEmpty()}"
+                               th:href="@{/oferente/habilidades(actualId=${c.id})}"
+                               class="btn-entrar">Entrar</a>
+                        </li>
+                    </th:block>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Col 3: Agregar habilidad -->
+        <div class="add-panel">
+            <h3>Agregar Habilidad</h3>
+            <form th:action="@{/oferente/habilidades/agregar}" method="post">
+                <div class="form-group">
+                    <label>Característica</label>
+                    <select class="form-control" name="caracId" required>
+                        <option value="">– Seleccione –</option>
+                        <option th:each="c : ${caracteristicas}"
+                                th:if="${c.hijos == null or c.hijos.isEmpty()}"
+                                th:value="${c.id}"
+                                th:text="${c.nombre}">Característica</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nivel (1-5)</label>
+                    <div class="nivel-input">
+                        <input type="number" name="nivel" min="1" max="5" value="1" class="form-control"/>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">Agregar</button>
+            </form>
+        </div>
+
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: footer}"/>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>BolsaEmpleo – Login</title>
+    <th:block th:replace="~{fragments/layout :: globalStyles}"/>
+    <style>
+        body { background: var(--bg); }
+
+        .login-wrapper {
+            min-height: calc(100vh - 48px - 52px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 16px;
+        }
+        .login-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            padding: 36px 40px;
+            width: 100%;
+            max-width: 360px;
+        }
+        .login-box h2 {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .login-avatar {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .login-avatar svg {
+            width: 48px;
+            height: 48px;
+            color: var(--accent);
+        }
+        .form-group label { font-size: 13px; }
+        .btn-login {
+            width: 100%;
+            padding: 9px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: background .15s;
+        }
+        .btn-login:hover { background: var(--accent-h); }
+        .login-note {
+            font-size: 12px;
+            color: var(--muted);
+            text-align: center;
+            margin-top: 16px;
+        }
+        .login-hint {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{fragments/layout :: navbar}"/>
+
+<div class="login-wrapper">
+    <div class="login-box">
+        <div class="login-avatar">
+            <!-- Ícono de usuario -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+            </svg>
+        </div>
+
+        <h2>Login</h2>
+
+        <div class="alert alert-danger" th:if="${param.error}">
+            Usuario o contraseña incorrectos.
+        </div>
+        <div class="alert alert-success" th:if="${param.registroOk}">
+            Registro exitoso. Espera la aprobación del administrador.
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="username">Usuario</label>
+                <input id="username" name="username" type="text" class="form-control"
+                       placeholder="correo o identificación" required/>
+                <div class="login-hint">
+                    Empresas y oferentes: use su correo o identificación
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input id="password" name="password" type="password" class="form-control"
+                       placeholder="••••••••" required/>
+            </div>
+            <button type="submit" class="btn-login">Entrar</button>
+        </form>
+
+        <p class="login-note">
+            ¿No tienes cuenta?
+            <a th:href="@{/registro/empresa}">Empresa</a> ·
+            <a th:href="@{/registro/oferente}">Oferente</a>
+        </p>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: footer}"/>
+</body>
+</html>

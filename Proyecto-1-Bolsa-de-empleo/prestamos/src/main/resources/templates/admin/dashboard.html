@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>BolsaEmpleo – Admin Dashboard</title>
+    <th:block th:replace="~{fragments/layout :: globalStyles}"/>
+</head>
+<body>
+<th:block th:replace="~{fragments/layout :: navbar}"/>
+<main>
+    <h1 class="page-title">Administrador</h1>
+    <p class="page-subtitle">Aprobaciones, catálogo de características y reportes.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a th:href="@{/admin/empresas/pendientes}"  class="btn btn-primary">Empresas pendientes</a>
+        <a th:href="@{/admin/oferentes/pendientes}" class="btn btn-primary">Oferentes pendientes</a>
+        <a th:href="@{/admin/caracteristicas}"      class="btn btn-outline">Características</a>
+        <a th:href="@{/admin/reportes}"             class="btn btn-outline">Reportes</a>
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: footer}"/>
+</body>
+</html>

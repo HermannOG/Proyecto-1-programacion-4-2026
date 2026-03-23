@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>BolsaEmpleo – Candidatos</title>
+    <th:block th:replace="~{fragments/layout :: globalStyles}"/>
+</head>
+<body>
+<th:block th:replace="~{fragments/layout :: navbar}"/>
+<main>
+    <h1 class="page-title">Candidatos para el puesto</h1>
+    <p class="page-subtitle">
+        Puesto: <strong th:text="${puesto.descripcion}">Descripción</strong>
+    </p>
+
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px;">
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Oferente</th>
+                <th>Requisitos cumplidos</th>
+                <th>% Coincidencia</th>
+                <th>Detalle</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="c : ${candidatos}">
+                <td th:text="${c.oferente.nombre + ' ' + c.oferente.primerApellido}">Nombre</td>
+                <td th:text="${c.cumplidos + ' / ' + c.total}">1/1</td>
+                <td>
+                    <strong th:text="${c.porcentaje}">100%</strong>
+                </td>
+                <td>
+                    <a th:href="@{/empresa/candidatos/{id}(id=${c.oferente.id})}"
+                       class="btn btn-primary btn-sm">Ver detalle</a>
+                </td>
+            </tr>
+            <tr th:if="${candidatos == null or candidatos.isEmpty()}">
+                <td colspan="4" style="text-align:center;color:var(--muted);padding:24px;">
+                    No se encontraron candidatos que cumplan los requisitos.
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <a th:href="@{/empresa/puestos}" class="btn btn-outline">Volver</a>
+</main>
+<th:block th:replace="~{fragments/layout :: footer}"/>
+</body>
+</html>

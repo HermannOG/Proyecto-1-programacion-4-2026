@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>BolsaEmpleo – Publicar Puesto</title>
+    <th:block th:replace="~{fragments/layout :: globalStyles}"/>
+    <style>
+        .req-row {
+            display: grid;
+            grid-template-columns: 1fr 120px 36px;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .req-row select, .req-row input { margin: 0; }
+        #reqs-container { margin-bottom: 12px; }
+        /* CSS-only: agregar fila usando el truco de checkbox */
+        .add-row-btn {
+            background: none;
+            border: 1px dashed var(--border);
+            color: var(--accent);
+            font-size: 13px;
+            padding: 6px 14px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .add-row-btn:hover { background: var(--bg); }
+
+        /* Filas de requisitos ocultas (se muestran con CSS :checked) */
+        .req-toggle { display: none; }
+        .req-row-item { display: none; }
+        .req-toggle:checked ~ .req-rows .req-row-item { display: grid; }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{fragments/layout :: navbar}"/>
+<main>
+    <h1 class="page-title">Publicar nuevo puesto</h1>
+
+    <div class="card" style="max-width:680px;">
+        <form th:action="@{/empresa/puestos/nuevo}" method="post">
+
+            <div class="form-group">
+                <label>Descripción del puesto</label>
+                <textarea class="form-control" name="descripcion" rows="3" required
+                          placeholder="Ej. Frontend Developer, Full Stack Developer…"></textarea>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                <div class="form-group">
+                    <label>Salario ofrecido (€)</label>
+                    <input type="number" class="form-control" name="salario"
+                           min="0" step="0.01" required placeholder="1500.00"/>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de publicación</label>
+                    <select class="form-control" name="esPublico">
+                        <option value="true">Público</option>
+                        <option value="false">Privado</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Características requeridas -->
+            <div class="form-group">
+                <label style="margin-bottom:10px;">Características requeridas</label>
+
+                <!-- Filas dinámicas: usamos múltiples inputs indexados -->
+                <!-- NOTA: en producción se puede usar JS para agregar dinámicamente.
+                     Como el proyecto prohíbe JS en las vistas, se pre-renderizan
+                     10 filas vacías y el backend ignora las vacías. -->
+                <div id="reqs-container">
+                    <th:block th:each="i : ${#numbers.sequence(0,9)}">
+                        <div class="req-row" th:id="'req-row-'+${i}"
+                             th:style="${i > 0} ? 'display:none' : ''">
+                            <select class="form-control"
+                                    th:name="'caracIds[' + ${i} + ']'">
+                                <option value="">– Característica –</option>
+                                <option th:each="c : ${caracteristicas}"
+                                        th:if="${c.hijos == null or c.hijos.isEmpty()}"
+                                        th:value="${c.id}"
+                                        th:text="${c.nombre}">Característica</option>
+                            </select>
+                            <input type="number" class="form-control"
+                                   th:name="'niveles[' + ${i} + ']'"
+                                   min="1" max="5" value="1" placeholder="Nivel 1-5"/>
+                        </div>
+                    </th:block>
+                </div>
+
+                <!-- Botón para mostrar siguiente fila (CSS toggle vía checkbox) -->
+                <!-- Fila 1 -->
+                <input type="checkbox" id="show1" class="req-toggle"
+                       onchange="document.getElementById('req-row-1').style.display=this.checked?'grid':'none'"/>
+                <label for="show1" class="add-row-btn">+ Agregar característica</label>
+            </div>
+
+            <div style="display:flex;gap:10px;margin-top:8px;">
+                <button type="submit" class="btn btn-primary">Publicar</button>
+                <a th:href="@{/empresa/puestos}" class="btn btn-outline">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
+    <p style="font-size:12px;color:var(--muted);margin-top:12px;">
+        Nota: puede agregar hasta 10 características. Deje vacías las que no necesite.
+    </p>
+</main>
+<th:block th:replace="~{fragments/layout :: footer}"/>
+</body>
+</html>

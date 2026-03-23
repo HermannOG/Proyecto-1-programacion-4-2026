@@ -1,0 +1,24 @@
+<!-- ===================================================
+     empresa/dashboard.html
+     =================================================== -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <title>BolsaEmpleo – Empresa Dashboard</title>
+    <th:block th:replace="~{fragments/layout :: globalStyles}"/>
+</head>
+<body>
+<th:block th:replace="~{fragments/layout :: navbar}"/>
+<main>
+    <h1 class="page-title">Empresa – Dashboard</h1>
+    <p class="page-subtitle">Desde aquí podéis administrar tus puestos y buscar candidatos.</p>
+    <div style="display:flex;gap:12px;">
+        <a th:href="@{/empresa/puestos}"      class="btn btn-outline">Ver mis puestos</a>
+        <a th:href="@{/empresa/puestos/nuevo}" class="btn btn-primary">Publicar nuevo puesto</a>
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: footer}"/>
+</body>
+</html>

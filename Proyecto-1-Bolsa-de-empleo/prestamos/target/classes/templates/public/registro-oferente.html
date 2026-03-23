@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>BolsaEmpleo – Registro Oferente</title>
+    <th:block th:replace="~{fragments/layout :: globalStyles}"/>
+    <style>
+        .reg-wrapper { max-width: 560px; margin: 0 auto; }
+        .reg-wrapper .card { padding: 28px 32px; }
+        .two-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{fragments/layout :: navbar}"/>
+<main>
+    <div class="reg-wrapper">
+        <h1 class="page-title">Registro de Oferente</h1>
+        <p class="page-subtitle">Complete el formulario. Un administrador aprobará su cuenta.</p>
+        <!-- Mensaje de error -->
+        <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+        <div class="card">
+            <form th:action="@{/registro/oferente}" method="post" th:object="${oferente}">
+                <div class="two-fields">
+                    <div class="form-group">
+                        <label>Identificación</label>
+                        <input type="text" class="form-control" th:field="*{identificacion}" required placeholder="123456789"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Nacionalidad</label>
+                        <input type="text" class="form-control" th:field="*{nacionalidad}" placeholder="Costarricense"/>
+                    </div>
+                </div>
+                <div class="two-fields">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" class="form-control" th:field="*{nombre}" required placeholder="Juan"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Primer apellido</label>
+                        <input type="text" class="form-control" th:field="*{primerApellido}" required placeholder="Pérez"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Correo electrónico</label>
+                    <input type="email" class="form-control" th:field="*{correo}" required placeholder="juan@email.com"/>
+                </div>
+                <div class="two-fields">
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="text" class="form-control" th:field="*{telefono}" placeholder="8888-8888"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Lugar de residencia</label>
+                        <input type="text" class="form-control" th:field="*{residencia}" placeholder="San José"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" class="form-control" name="clave" required placeholder="Mínimo 8 caracteres"/>
+                </div>
+                <div style="display:flex;gap:10px;margin-top:8px;">
+                    <button type="submit" class="btn btn-primary">Registrarse</button>
+                    <a th:href="@{/}" class="btn btn-outline">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: footer}"/>
+</body>
+</html>

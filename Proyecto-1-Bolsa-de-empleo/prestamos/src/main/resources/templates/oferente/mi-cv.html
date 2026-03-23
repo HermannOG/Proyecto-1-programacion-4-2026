@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>BolsaEmpleo – Mi CV</title>
+    <th:block th:replace="~{fragments/layout :: globalStyles}"/>
+</head>
+<body>
+<th:block th:replace="~{fragments/layout :: navbar}"/>
+<main>
+    <h1 class="page-title">Mi Currículo (CV)</h1>
+    <p class="page-subtitle">Sube tu currículo en formato PDF. Máximo 5 MB.</p>
+
+    <div class="card" style="max-width:480px;padding:28px 32px;">
+
+        <!-- CV actual -->
+        <th:block th:if="${oferente != null and oferente.curriculumPdf != null}">
+            <div class="alert alert-success" style="margin-bottom:18px;">
+                CV actual:
+                <a th:href="@{/curriculos/{f}(f=${oferente.curriculumPdf})}"
+                   target="_blank" style="color:var(--accent);">Ver PDF</a>
+            </div>
+        </th:block>
+
+        <form th:action="@{/oferente/cv}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>Seleccionar archivo PDF</label>
+                <input type="file" class="form-control" name="archivo" accept=".pdf" required/>
+            </div>
+            <div style="display:flex;gap:10px;">
+                <button type="submit" class="btn btn-primary">Subir CV</button>
+                <a th:href="@{/oferente/dashboard}" class="btn btn-outline">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</main>
+<th:block th:replace="~{fragments/layout :: footer}"/>
+</body>
+</html>
