@@ -14,7 +14,6 @@
         }
         .req-row select, .req-row input { margin: 0; }
         #reqs-container { margin-bottom: 12px; }
-        /* CSS-only: agregar fila usando el truco de checkbox */
         .add-row-btn {
             background: none;
             border: 1px dashed var(--border);
@@ -26,11 +25,7 @@
             font-family: inherit;
         }
         .add-row-btn:hover { background: var(--bg); }
-
-        /* Filas de requisitos ocultas (se muestran con CSS :checked) */
         .req-toggle { display: none; }
-        .req-row-item { display: none; }
-        .req-toggle:checked ~ .req-rows .req-row-item { display: grid; }
     </style>
 </head>
 <body>
@@ -84,11 +79,41 @@
                     </th:block>
                 </div>
 
-                <!-- Botón para mostrar siguiente fila (CSS toggle vía checkbox) -->
-                <!-- Fila 1 -->
                 <input type="checkbox" id="show1" class="req-toggle"
-                       onchange="document.getElementById('req-row-1').style.display=this.checked?'grid':'none'"/>
-                <label for="show1" class="add-row-btn">+ Agregar característica</label>
+                       onchange="document.getElementById('req-row-1').style.display=this.checked?'grid':'none'; document.getElementById('lbl1').style.display='none'; document.getElementById('lbl2').style.display='inline-block';"/>
+                <label for="show1" class="add-row-btn" id="lbl1">+ Agregar característica</label>
+
+                <input type="checkbox" id="show2" class="req-toggle"
+                       onchange="document.getElementById('req-row-2').style.display=this.checked?'grid':'none'; document.getElementById('lbl2').style.display='none'; document.getElementById('lbl3').style.display='inline-block';"/>
+                <label for="show2" class="add-row-btn" id="lbl2" style="display:none;">+ Agregar característica</label>
+
+                <input type="checkbox" id="show3" class="req-toggle"
+                       onchange="document.getElementById('req-row-3').style.display=this.checked?'grid':'none'; document.getElementById('lbl3').style.display='none'; document.getElementById('lbl4').style.display='inline-block';"/>
+                <label for="show3" class="add-row-btn" id="lbl3" style="display:none;">+ Agregar característica</label>
+
+                <input type="checkbox" id="show4" class="req-toggle"
+                       onchange="document.getElementById('req-row-4').style.display=this.checked?'grid':'none'; document.getElementById('lbl4').style.display='none'; document.getElementById('lbl5').style.display='inline-block';"/>
+                <label for="show4" class="add-row-btn" id="lbl4" style="display:none;">+ Agregar característica</label>
+
+                <input type="checkbox" id="show5" class="req-toggle"
+                       onchange="document.getElementById('req-row-5').style.display=this.checked?'grid':'none'; document.getElementById('lbl5').style.display='none'; document.getElementById('lbl6').style.display='inline-block';"/>
+                <label for="show5" class="add-row-btn" id="lbl5" style="display:none;">+ Agregar característica</label>
+
+                <input type="checkbox" id="show6" class="req-toggle"
+                       onchange="document.getElementById('req-row-6').style.display=this.checked?'grid':'none'; document.getElementById('lbl6').style.display='none'; document.getElementById('lbl7').style.display='inline-block';"/>
+                <label for="show6" class="add-row-btn" id="lbl6" style="display:none;">+ Agregar característica</label>
+
+                <input type="checkbox" id="show7" class="req-toggle"
+                       onchange="document.getElementById('req-row-7').style.display=this.checked?'grid':'none'; document.getElementById('lbl7').style.display='none'; document.getElementById('lbl8').style.display='inline-block';"/>
+                <label for="show7" class="add-row-btn" id="lbl7" style="display:none;">+ Agregar característica</label>
+
+                <input type="checkbox" id="show8" class="req-toggle"
+                       onchange="document.getElementById('req-row-8').style.display=this.checked?'grid':'none'; document.getElementById('lbl8').style.display='none'; document.getElementById('lbl9').style.display='inline-block';"/>
+                <label for="show8" class="add-row-btn" id="lbl8" style="display:none;">+ Agregar característica</label>
+
+                <input type="checkbox" id="show9" class="req-toggle"
+                       onchange="document.getElementById('req-row-9').style.display=this.checked?'grid':'none'; document.getElementById('lbl9').style.display='none';"/>
+                <label for="show9" class="add-row-btn" id="lbl9" style="display:none;">+ Agregar característica</label>
             </div>
 
             <div style="display:flex;gap:10px;margin-top:8px;">

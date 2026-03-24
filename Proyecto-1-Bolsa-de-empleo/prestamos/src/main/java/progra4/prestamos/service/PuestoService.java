@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,13 @@ public class PuestoService {
     }
 
     public List<Puesto> puestosDeEmpresaActual() {
-        Empresa e = empresaActual();
-        return puestoRepo.findByEmpresaId(e.getId());
+        String correo = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Empresa> empresa = empresaRepo.findByCorreo(correo);
+        if (empresa.isEmpty()) {
+            // Es admin u otro rol sin empresa — devolver todos los puestos
+            return puestoRepo.findAll();
+        }
+        return puestoRepo.findByEmpresaId(empresa.get().getId());
     }
 
     @Transactional
@@ -38,7 +44,6 @@ public class PuestoService {
         puesto.setCaracteristicas(new ArrayList<>());
         Puesto saved = puestoRepo.save(puesto);
         for (int i = 0; i < caracIds.size(); i++) {
-            // Ignorar filas vacías del formulario
             if (caracIds.get(i) == null || caracIds.get(i) == 0) continue;
             PuestoCaracteristica pc = new PuestoCaracteristica();
             pc.setPuesto(saved);
