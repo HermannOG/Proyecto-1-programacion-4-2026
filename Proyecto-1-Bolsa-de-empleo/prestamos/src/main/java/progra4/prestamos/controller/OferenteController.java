@@ -41,7 +41,8 @@ public class OferenteController {
     }
 
     @GetMapping("/cv")
-    public String miCV() {
+    public String miCV(Model model) {
+        model.addAttribute("oferente", oferenteService.oferenteActualPublico());
         return "oferente/mi-cv";
     }
 

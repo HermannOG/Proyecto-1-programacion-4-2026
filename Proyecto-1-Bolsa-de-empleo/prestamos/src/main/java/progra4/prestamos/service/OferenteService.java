@@ -56,6 +56,10 @@ public class OferenteService {
         return oferenteRepo.findByAprobadoFalse();
     }
 
+    public Oferente oferenteActualPublico() {
+        return oferenteActual();
+    }
+
     @Transactional
     public void aprobar(Integer id) {
         Oferente o = oferenteRepo.findById(id).orElseThrow();

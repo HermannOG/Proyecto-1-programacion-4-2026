@@ -4,6 +4,57 @@
     <meta charset="UTF-8"/>
     <title>BolsaEmpleo – Mi CV</title>
     <th:block th:replace="~{fragments/layout :: globalStyles}"/>
+    <style>
+        .cv-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+        .cv-icon {
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+        .cv-info { flex: 1; }
+        .cv-info .cv-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            margin-bottom: 3px;
+        }
+        .cv-info .cv-filename {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            font-family: 'DM Mono', monospace;
+        }
+        .cv-actions { display: flex; gap: 8px; }
+        .cv-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            padding: 5px 14px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: var(--radius);
+            text-decoration: none;
+            transition: background .15s;
+        }
+        .cv-link:hover { background: var(--accent-h); }
+        .cv-link-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-sm);
+        }
+        .cv-link-outline:hover { background: var(--bg); }
+    </style>
 </head>
 <body>
 <th:block th:replace="~{fragments/layout :: navbar}"/>
@@ -11,34 +62,54 @@
     <h1 class="page-title">Mi Currículo (CV)</h1>
     <p class="page-subtitle">Sube tu currículo en formato PDF. Máximo 5 MB.</p>
 
-    <div class="card" style="max-width:480px;padding:28px 32px;">
+    <div style="max-width:520px;">
 
         <!-- CV actual -->
         <th:block th:if="${oferente != null and oferente.curriculumPdf != null}">
-            <div class="alert alert-success" style="margin-bottom:18px;">
-                CV actual:
-                <a th:href="@{/curriculos/{f}(f=${oferente.curriculumPdf})}"
-                   target="_blank" style="color:var(--accent);">Ver PDF</a>
+            <div class="cv-card">
+                <div class="cv-icon">📄</div>
+                <div class="cv-info">
+                    <div class="cv-label">CV actual</div>
+                    <div class="cv-filename" th:text="${oferente.curriculumPdf}">cv_1.pdf</div>
+                </div>
+                <div class="cv-actions">
+                    <a th:href="@{/curriculos/{f}(f=${oferente.curriculumPdf})}"
+                       target="_blank" class="cv-link">
+                        Ver PDF
+                    </a>
+                    <a th:href="@{/curriculos/{f}(f=${oferente.curriculumPdf})}"
+                       download class="cv-link cv-link-outline">
+                        Descargar
+                    </a>
+                </div>
             </div>
         </th:block>
 
-        <form th:action="@{/oferente/cv}" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label>Seleccionar archivo PDF</label>
-                <input type="file" class="form-control" name="archivo" accept=".pdf" required/>
+        <th:block th:if="${oferente == null or oferente.curriculumPdf == null}">
+            <div class="alert alert-danger" style="margin-bottom:18px;">
+                No tenés ningún CV subido aún.
             </div>
-            <div style="display:flex;gap:10px;">
-                <button type="submit" class="btn btn-primary">Subir CV</button>
-                <a th:href="@{/oferente/dashboard}" class="btn btn-outline">Cancelar</a>
-            </div>
-        </form>
+        </th:block>
+
+        <!-- Formulario subir nuevo CV -->
+        <div class="card" style="padding:24px 28px;">
+            <h3 style="font-size:14px;font-weight:700;margin-bottom:16px;">
+                <span th:if="${oferente != null and oferente.curriculumPdf != null}">Reemplazar CV</span>
+                <span th:if="${oferente == null or oferente.curriculumPdf == null}">Subir CV</span>
+            </h3>
+            <form th:action="@{/oferente/cv}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>Seleccionar archivo PDF</label>
+                    <input type="file" class="form-control" name="archivo" accept=".pdf" required/>
+                </div>
+                <div style="display:flex;gap:10px;">
+                    <button type="submit" class="btn btn-primary">Subir CV</button>
+                    <a th:href="@{/oferente/dashboard}" class="btn btn-outline">Cancelar</a>
+                </div>
+            </form>
+        </div>
+
     </div>
-
-    <div style="margin-top: 16px;">
-        <a th:href="@{/oferente/dashboard}" class="btn btn-outline">← Volver al Dashboard</a>
-    </div>
-
-
 </main>
 <th:block th:replace="~{fragments/layout :: footer}"/>
 </body>

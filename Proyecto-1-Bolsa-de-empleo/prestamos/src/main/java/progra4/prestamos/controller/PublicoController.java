@@ -26,7 +26,15 @@ public class PublicoController {
 
     @GetMapping("/")
     public String inicio(Model model) {
-        model.addAttribute("puestos", puestoService.ultimos5Publicos());
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean autenticado = auth != null && auth.isAuthenticated() &&
+                !(auth instanceof org.springframework.security.authentication.AnonymousAuthenticationToken);
+
+        if (autenticado) {
+            model.addAttribute("puestos", puestoService.todosActivos());
+        } else {
+            model.addAttribute("puestos", puestoService.ultimos5Publicos());
+        }
         return "public/inicio";
     }
 

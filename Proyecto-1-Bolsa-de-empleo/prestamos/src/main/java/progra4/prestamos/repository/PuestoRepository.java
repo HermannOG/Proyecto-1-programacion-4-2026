@@ -15,6 +15,8 @@ public interface PuestoRepository extends JpaRepository<Puesto, Integer> {
 
     List<Puesto> findByEmpresaId(Integer empresaId);
 
+    List<Puesto> findByActivoTrue();
+
     @Query("SELECT p FROM Puesto p WHERE p.fechaRegistro BETWEEN :inicio AND :fin")
     List<Puesto> findByRangoDeFechas(@Param("inicio") LocalDateTime inicio,
                                      @Param("fin")   LocalDateTime fin);

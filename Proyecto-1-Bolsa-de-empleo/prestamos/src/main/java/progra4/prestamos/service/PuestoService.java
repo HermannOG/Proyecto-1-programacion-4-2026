@@ -61,6 +61,10 @@ public class PuestoService {
         puestoRepo.save(p);
     }
 
+    public List<Puesto> todosActivos() {
+        return puestoRepo.findByActivoTrue();
+    }
+
     public Puesto obtener(Integer id) {
         return puestoRepo.findById(id).orElseThrow();
     }
