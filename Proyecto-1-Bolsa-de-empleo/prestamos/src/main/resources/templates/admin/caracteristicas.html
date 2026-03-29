@@ -12,7 +12,7 @@
             align-items: start;
         }
 
-        /* ===== Ruta (breadcrumb) ===== */
+
         .ruta-box { margin-bottom: 16px; }
         .ruta-label { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
         .ruta-crumbs { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
@@ -27,7 +27,7 @@
         .ruta-crumb:hover { background: #2d3554; }
         .ruta-sep { color: var(--muted); font-size: 12px; }
 
-        /* ===== Lista de nodos ===== */
+
         .cat-list { list-style: none; padding: 0; }
         .cat-item {
             display: flex;
@@ -58,9 +58,9 @@
 
     <div class="carac-layout">
 
-        <!-- Columna izquierda: navegación jerárquica -->
+
         <div>
-            <!-- Breadcrumb -->
+
             <div class="ruta-box">
                 <div class="ruta-label">Ruta:</div>
                 <div class="ruta-crumbs">
@@ -85,10 +85,10 @@
                 </p>
             </div>
 
-            <!-- Lista de categorías/subcategorías -->
+
             <div class="card" style="padding:0;overflow:hidden;">
                 <ul class="cat-list">
-                    <!-- Raíces -->
+
                     <th:block th:if="${actual == null}">
                         <li class="cat-item" th:each="c : ${raices}">
                             <span class="cat-name" th:text="${c.nombre}">Categoría</span>
@@ -103,7 +103,7 @@
                         </li>
                     </th:block>
 
-                    <!-- Hijos del nodo actual -->
+
                     <th:block th:if="${actual != null}">
                         <li class="cat-item" th:each="c : ${actual.hijos}">
                             <span class="cat-name" th:text="${c.nombre}">Sub</span>
@@ -122,7 +122,7 @@
             </div>
         </div>
 
-        <!-- Columna derecha: formulario agregar -->
+
         <div class="add-panel">
             <h3>Agregar Característica</h3>
             <form th:action="@{/admin/caracteristicas}" method="post">
@@ -139,14 +139,14 @@
                     <label>Padre</label>
                     <select class="form-control" name="padreId">
                         <option value="">(sin padre)</option>
-                        <!-- Raíces -->
+
                         <option th:each="r : ${raices}"
                                 th:value="${r.id}"
                                 th:text="${r.nombre}"
                                 th:selected="${actual != null and actual.padre == null and actual.id == r.id}">
                             Raíz
                         </option>
-                        <!-- Si tenemos actual, mostrar también sus ancestros y él mismo -->
+
                         <th:block th:if="${actual != null}">
                             <option th:value="${actual.id}"
                                     th:text="${actual.nombre}"

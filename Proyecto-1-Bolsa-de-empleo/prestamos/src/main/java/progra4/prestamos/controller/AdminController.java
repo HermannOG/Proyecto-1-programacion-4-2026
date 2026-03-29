@@ -26,7 +26,7 @@ public class AdminController {
         return "admin/dashboard";
     }
 
-    // ---- Aprobaciones empresas ----
+    // ---- aprobaciones empresas ----
     @GetMapping("/empresas/pendientes")
     public String empresasPendientes(Model model) {
         model.addAttribute("empresas", empresaService.pendientes());
@@ -39,7 +39,7 @@ public class AdminController {
         return "redirect:/admin/empresas/pendientes";
     }
 
-    // ---- Aprobaciones oferentes ----
+    // ---- aprobaciones oferentes ----
     @GetMapping("/oferentes/pendientes")
     public String oferentesPendientes(Model model) {
         model.addAttribute("oferentes", oferenteService.pendientes());

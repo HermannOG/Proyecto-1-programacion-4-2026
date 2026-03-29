@@ -7,25 +7,42 @@
     <style>
         .req-row {
             display: grid;
-            grid-template-columns: 1fr 120px 36px;
+            grid-template-columns: 1fr 120px;
             gap: 8px;
             align-items: center;
             margin-bottom: 8px;
         }
-        .req-row select, .req-row input { margin: 0; }
-        #reqs-container { margin-bottom: 12px; }
-        .add-row-btn {
+
+        .req-toggle {
+            display: none;
+        }
+
+        .req-toggle ~ .add-row-btn {
+            display: inline-block;
+            cursor: pointer;
             background: none;
             border: 1px dashed var(--border);
             color: var(--accent);
             font-size: 13px;
             padding: 6px 14px;
             border-radius: var(--radius);
-            cursor: pointer;
             font-family: inherit;
+            margin-bottom: 8px;
         }
+
+        .req-toggle ~ .req-extra {
+            display: none;
+        }
+
+        .req-toggle:checked ~ .add-row-btn {
+            display: none;
+        }
+
+        .req-toggle:checked ~ .req-extra {
+            display: grid;
+        }
+
         .add-row-btn:hover { background: var(--bg); }
-        .req-toggle { display: none; }
     </style>
 </head>
 <body>
@@ -57,74 +74,91 @@
                 </div>
             </div>
 
-            <!-- Características requeridas -->
             <div class="form-group">
                 <label style="margin-bottom:10px;">Características requeridas</label>
 
                 <div id="reqs-container">
-                    <th:block th:each="i : ${#numbers.sequence(0,9)}">
-                        <div class="req-row" th:id="'req-row-'+${i}"
-                             th:style="${i > 0} ? 'display:none' : ''">
-                            <select class="form-control" name="caracIds">
-                                <option value="">– Característica –</option>
-                                <option th:each="c : ${caracteristicas}"
-                                        th:if="${c.hijos == null or c.hijos.isEmpty()}"
-                                        th:value="${c.id}"
-                                        th:text="${c.nombre}">Característica</option>
-                            </select>
-                            <input type="number" class="form-control"
-                                   name="niveles"
-                                   min="1" max="5" value="1" placeholder="Nivel 1-5"/>
-                        </div>
-                    </th:block>
+
+                    <div class="req-row">
+                        <select class="form-control" name="caracIds">
+                            <option value="">– Característica –</option>
+                            <option th:each="c : ${caracteristicas}"
+                                    th:if="${c.hijos == null or c.hijos.isEmpty()}"
+                                    th:value="${c.id}"
+                                    th:text="${c.nombre}">Característica</option>
+                        </select>
+                        <input type="number" class="form-control" name="niveles"
+                               min="1" max="5" value="1" placeholder="Nivel 1-5"/>
+                    </div>
+
+                    <input type="checkbox" id="show1" class="req-toggle"/>
+                    <label for="show1" class="add-row-btn">+ Agregar característica</label>
+                    <div class="req-row req-extra">
+                        <select class="form-control" name="caracIds">
+                            <option value="">– Característica –</option>
+                            <option th:each="c : ${caracteristicas}"
+                                    th:if="${c.hijos == null or c.hijos.isEmpty()}"
+                                    th:value="${c.id}"
+                                    th:text="${c.nombre}">Característica</option>
+                        </select>
+                        <input type="number" class="form-control" name="niveles"
+                               min="1" max="5" value="1" placeholder="Nivel 1-5"/>
+                    </div>
+
+                    <input type="checkbox" id="show2" class="req-toggle"/>
+                    <label for="show2" class="add-row-btn">+ Agregar característica</label>
+                    <div class="req-row req-extra">
+                        <select class="form-control" name="caracIds">
+                            <option value="">– Característica –</option>
+                            <option th:each="c : ${caracteristicas}"
+                                    th:if="${c.hijos == null or c.hijos.isEmpty()}"
+                                    th:value="${c.id}"
+                                    th:text="${c.nombre}">Característica</option>
+                        </select>
+                        <input type="number" class="form-control" name="niveles"
+                               min="1" max="5" value="1" placeholder="Nivel 1-5"/>
+                    </div>
+
+
+                    <input type="checkbox" id="show3" class="req-toggle"/>
+                    <label for="show3" class="add-row-btn">+ Agregar característica</label>
+                    <div class="req-row req-extra">
+                        <select class="form-control" name="caracIds">
+                            <option value="">– Característica –</option>
+                            <option th:each="c : ${caracteristicas}"
+                                    th:if="${c.hijos == null or c.hijos.isEmpty()}"
+                                    th:value="${c.id}"
+                                    th:text="${c.nombre}">Característica</option>
+                        </select>
+                        <input type="number" class="form-control" name="niveles"
+                               min="1" max="5" value="1" placeholder="Nivel 1-5"/>
+                    </div>
+
+                    <!-- Fila 5 -->
+                    <input type="checkbox" id="show4" class="req-toggle"/>
+                    <label for="show4" class="add-row-btn">+ Agregar característica</label>
+                    <div class="req-row req-extra">
+                        <select class="form-control" name="caracIds">
+                            <option value="">– Característica –</option>
+                            <option th:each="c : ${caracteristicas}"
+                                    th:if="${c.hijos == null or c.hijos.isEmpty()}"
+                                    th:value="${c.id}"
+                                    th:text="${c.nombre}">Característica</option>
+                        </select>
+                        <input type="number" class="form-control" name="niveles"
+                               min="1" max="5" value="1" placeholder="Nivel 1-5"/>
+                    </div>
+
                 </div>
-
-                <input type="checkbox" id="show1" class="req-toggle"
-                       onchange="document.getElementById('req-row-1').style.display=this.checked?'grid':'none'; document.getElementById('lbl1').style.display='none'; document.getElementById('lbl2').style.display='inline-block';"/>
-                <label for="show1" class="add-row-btn" id="lbl1">+ Agregar característica</label>
-
-                <input type="checkbox" id="show2" class="req-toggle"
-                       onchange="document.getElementById('req-row-2').style.display=this.checked?'grid':'none'; document.getElementById('lbl2').style.display='none'; document.getElementById('lbl3').style.display='inline-block';"/>
-                <label for="show2" class="add-row-btn" id="lbl2" style="display:none;">+ Agregar característica</label>
-
-                <input type="checkbox" id="show3" class="req-toggle"
-                       onchange="document.getElementById('req-row-3').style.display=this.checked?'grid':'none'; document.getElementById('lbl3').style.display='none'; document.getElementById('lbl4').style.display='inline-block';"/>
-                <label for="show3" class="add-row-btn" id="lbl3" style="display:none;">+ Agregar característica</label>
-
-                <input type="checkbox" id="show4" class="req-toggle"
-                       onchange="document.getElementById('req-row-4').style.display=this.checked?'grid':'none'; document.getElementById('lbl4').style.display='none'; document.getElementById('lbl5').style.display='inline-block';"/>
-                <label for="show4" class="add-row-btn" id="lbl4" style="display:none;">+ Agregar característica</label>
-
-                <input type="checkbox" id="show5" class="req-toggle"
-                       onchange="document.getElementById('req-row-5').style.display=this.checked?'grid':'none'; document.getElementById('lbl5').style.display='none'; document.getElementById('lbl6').style.display='inline-block';"/>
-                <label for="show5" class="add-row-btn" id="lbl5" style="display:none;">+ Agregar característica</label>
-
-                <input type="checkbox" id="show6" class="req-toggle"
-                       onchange="document.getElementById('req-row-6').style.display=this.checked?'grid':'none'; document.getElementById('lbl6').style.display='none'; document.getElementById('lbl7').style.display='inline-block';"/>
-                <label for="show6" class="add-row-btn" id="lbl6" style="display:none;">+ Agregar característica</label>
-
-                <input type="checkbox" id="show7" class="req-toggle"
-                       onchange="document.getElementById('req-row-7').style.display=this.checked?'grid':'none'; document.getElementById('lbl7').style.display='none'; document.getElementById('lbl8').style.display='inline-block';"/>
-                <label for="show7" class="add-row-btn" id="lbl7" style="display:none;">+ Agregar característica</label>
-
-                <input type="checkbox" id="show8" class="req-toggle"
-                       onchange="document.getElementById('req-row-8').style.display=this.checked?'grid':'none'; document.getElementById('lbl8').style.display='none'; document.getElementById('lbl9').style.display='inline-block';"/>
-                <label for="show8" class="add-row-btn" id="lbl8" style="display:none;">+ Agregar característica</label>
-
-                <input type="checkbox" id="show9" class="req-toggle"
-                       onchange="document.getElementById('req-row-9').style.display=this.checked?'grid':'none'; document.getElementById('lbl9').style.display='none';"/>
-                <label for="show9" class="add-row-btn" id="lbl9" style="display:none;">+ Agregar característica</label>
             </div>
 
-            <div style="display:flex;gap:10px;margin-top:8px;">
-                <button type="submit" class="btn btn-primary">Publicar</button>
-                <a th:href="@{/empresa/puestos}" class="btn btn-outline">Cancelar</a>
-            </div>
+            <button type="submit" class="btn btn-primary">Publicar puesto</button>
+
         </form>
     </div>
 
     <p style="font-size:12px;color:var(--muted);margin-top:12px;">
-        Nota: puede agregar hasta 10 características. Deje vacías las que no necesite.
+        Nota: puede agregar hasta 5 características. Deje vacías las que no necesite.
     </p>
 </main>
 <th:block th:replace="~{fragments/layout :: footer}"/>
