@@ -11,8 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.PrintWriter;
-
 @Controller
 @RequestMapping("/admin")
 @RequiredArgsConstructor
@@ -85,15 +83,17 @@ public class AdminController {
         return "admin/reportes";
     }
 
-    // Genera reporte como página HTML imprimible (sin librería externa)
+    // Genera reporte PDF real (OpenPDF) y lo envía como descarga
     @GetMapping("/reportes/pdf")
     public void generarReporte(@RequestParam int anio,
                                @RequestParam int mes,
                                HttpServletResponse response) throws Exception {
-        String html = reporteService.puestosPorMesHtml(anio, mes);
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter writer = response.getWriter();
-        writer.write(html);
-        writer.flush();
+        byte[] pdf = reporteService.puestosPorMesPdf(anio, mes);
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=\"reporte-puestos-" + anio + "-" + mes + ".pdf\"");
+        response.setContentLength(pdf.length);
+        response.getOutputStream().write(pdf);
+        response.getOutputStream().flush();
     }
 }

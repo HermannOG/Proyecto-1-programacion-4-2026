@@ -65,6 +65,10 @@ public class PuestoService {
         return puestoRepo.findByActivoTrue();
     }
 
+    public List<Puesto> soloPublicosActivos() {
+        return puestoRepo.findByEsPublicoTrueAndActivoTrue();
+    }
+
     public Puesto obtener(Integer id) {
         return puestoRepo.findById(id).orElseThrow();
     }

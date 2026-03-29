@@ -30,8 +30,13 @@ public class PublicoController {
         boolean autenticado = auth != null && auth.isAuthenticated() &&
                 !(auth instanceof org.springframework.security.authentication.AnonymousAuthenticationToken);
 
-        if (autenticado) {
+        boolean esOferenteAprobado = autenticado && auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_OFERENTE"));
+
+        if (esOferenteAprobado) {
             model.addAttribute("puestos", puestoService.todosActivos());
+        } else if (autenticado) {
+            model.addAttribute("puestos", puestoService.soloPublicosActivos());
         } else {
             model.addAttribute("puestos", puestoService.ultimos5Publicos());
         }
