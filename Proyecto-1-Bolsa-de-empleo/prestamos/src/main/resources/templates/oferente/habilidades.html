@@ -144,7 +144,6 @@
 
             <div class="card tree-nav" style="padding:0;overflow:hidden;">
                 <ul class="node-list">
-                    <!-- Raíz: mostrar categorías raíz -->
                     <th:block th:if="${actual == null}">
                         <li class="node-item" th:each="c : ${caracteristicas}"
                             th:if="${c.padre == null}">
@@ -156,7 +155,6 @@
                     <th:block th:if="${actual != null}">
                         <li class="node-item" th:each="c : ${actual.hijos}">
                             <span class="node-name" th:text="${c.nombre}">Sub</span>
-                            <!-- Entrar siempre visible, con o sin hijos -->
                             <a th:href="@{/oferente/habilidades(actualId=${c.id})}"
                                class="btn-entrar">Entrar</a>
                         </li>
