@@ -57,14 +57,13 @@
 <main>
     <h1 class="page-title">Detalle del puesto</h1>
 
-    <!-- ===== Alertas ===== -->
     <div class="alert alert-success"
          th:if="${param.aplicacionOk}">
-        ✅ ¡Aplicación enviada con éxito! La empresa revisará tu perfil.
+         ¡Aplicación enviada con éxito! La empresa revisará tu perfil.
     </div>
     <div class="alert alert-danger"
          th:if="${param.yaAplico}">
-        ⚠️ Ya habías aplicado a este puesto anteriormente.
+         Ya habías aplicado a este puesto anteriormente.
     </div>
     <div class="alert alert-success"
          th:if="${param.aplicar}">
@@ -101,7 +100,6 @@
             </div>
         </div>
 
-        <!-- Características requeridas -->
         <div class="section-title">Características requeridas</div>
         <ul class="req-list"
             th:if="${puesto.caracteristicas != null and !puesto.caracteristicas.isEmpty()}">
@@ -117,10 +115,8 @@
             Sin requisitos específicos.
         </p>
 
-        <!-- ===== Zona de aplicación ===== -->
         <div class="apply-box" th:if="${puesto.activo}">
 
-            <!-- Caso 1: Ya aplicó -->
             <th:block th:if="${yaAplico}">
                 <span class="badge badge-green" style="font-size:13px;padding:7px 16px;">
                     ✓ Ya aplicaste a este puesto
@@ -130,10 +126,8 @@
                 </a>
             </th:block>
 
-            <!-- Caso 2: No aplicó -->
             <th:block th:unless="${yaAplico}">
 
-                <!-- Autenticado como oferente: botón directo -->
                 <th:block sec:authorize="hasRole('OFERENTE')">
                     <form th:action="@{/puestos/{id}/aplicar(id=${puesto.id})}"
                           method="post">
@@ -146,7 +140,6 @@
                     </span>
                 </th:block>
 
-                <!-- No autenticado o rol distinto: redirigir a login -->
                 <th:block sec:authorize="!hasRole('OFERENTE')">
                     <form th:action="@{/puestos/{id}/aplicar(id=${puesto.id})}"
                           method="post">
@@ -162,7 +155,6 @@
             </th:block>
         </div>
 
-        <!-- Puesto inactivo -->
         <div class="apply-box" th:unless="${puesto.activo}">
             <span style="color:var(--muted);font-size:13px;">
                 Este puesto ya no está disponible para aplicaciones.

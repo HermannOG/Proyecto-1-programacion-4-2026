@@ -1,5 +1,6 @@
 package progra4.prestamos.controller;
 
+import progra4.prestamos.model.Caracteristica;
 import progra4.prestamos.service.CaracteristicaService;
 import progra4.prestamos.service.OferenteService;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +28,19 @@ public class OferenteController {
     public String habilidades(@RequestParam(required = false) Integer actualId, Model model) {
         model.addAttribute("habilidades", oferenteService.misHabilidades());
         model.addAttribute("caracteristicas", caracteristicaService.todasJerarquicas());
+
         if (actualId != null) {
-            model.addAttribute("actual", caracteristicaService.obtener(actualId));
+            Caracteristica actual = caracteristicaService.obtener(actualId);
+            model.addAttribute("actual", actual);
+            model.addAttribute("hojasActuales", caracteristicaService.hojasDeNodo(actual));
+            // Calcular ancestros para el breadcrumb
+            model.addAttribute("ancestros", caracteristicaService.ancestros(actual));
+        } else {
+            model.addAttribute("hojasActuales", caracteristicaService.hojas());
         }
+
         return "oferente/habilidades";
     }
-
 
     @PostMapping("/habilidades/eliminar")
     public String eliminarHabilidad(@RequestParam Integer habilidadId) {
@@ -46,19 +54,21 @@ public class OferenteController {
         return "oferente/mi-cv";
     }
 
-
     @PostMapping("/habilidades/agregar")
     public String agregarHabilidad(@RequestParam Integer caracId,
-                                   @RequestParam Integer nivel) {
+                                   @RequestParam Integer nivel,
+                                   @RequestParam(required = false) Integer actualId) {
         oferenteService.agregarHabilidad(caracId, nivel);
-        return "redirect:/oferente/habilidades"; // queda en habilidades, OK
+        if (actualId != null) {
+            return "redirect:/oferente/habilidades?actualId=" + actualId;
+        }
+        return "redirect:/oferente/habilidades";
     }
 
     @PostMapping("/cv")
     public String subirCV(@RequestParam MultipartFile archivo) {
         oferenteService.guardarCurriculum(archivo);
         return "redirect:/oferente/dashboard";
-
     }
 
     @GetMapping("/aplicaciones")

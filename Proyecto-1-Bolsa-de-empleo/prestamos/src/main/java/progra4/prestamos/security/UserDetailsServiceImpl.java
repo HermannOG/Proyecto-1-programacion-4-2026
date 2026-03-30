@@ -34,7 +34,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         log.info("Intentando login con usuario: '{}'", user);
 
-        // 1) Empresa por correo
+
         var empresa = empresaRepo.findByCorreo(userLower);
         if (empresa.isPresent()) {
             Empresa e = empresa.get();
@@ -54,7 +54,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                     .build();
         }
 
-        // 2) Oferente por correo
+
         var oferentePorCorreo = oferenteRepo.findByCorreo(userLower);
         if (oferentePorCorreo.isPresent()) {
             Oferente o = oferentePorCorreo.get();
@@ -74,7 +74,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                     .build();
         }
 
-        // 3) Oferente por identificación
+
         var oferentePorId = oferenteRepo.findByIdentificacion(user);
         if (oferentePorId.isPresent()) {
             Oferente o = oferentePorId.get();
@@ -94,14 +94,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                     .build();
         }
 
-        // 4) Admin por identificación
+
         var admin = adminRepo.findByIdentificacion(user);
+        if (admin.isEmpty()) {
+            admin = adminRepo.findByCorreo(userLower);
+        }
         if (admin.isPresent()) {
             Administrador a = admin.get();
             log.info("Encontrado como administrador: {}", a.getIdentificacion());
 
             return User.builder()
-                    .username(a.getIdentificacion())
+                    .username(a.getCorreo())
                     .password(a.getClave())
                     .roles("ADMIN")
                     .build();

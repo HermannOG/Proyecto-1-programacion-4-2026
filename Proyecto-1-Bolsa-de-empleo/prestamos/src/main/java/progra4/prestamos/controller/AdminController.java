@@ -26,7 +26,6 @@ public class AdminController {
         return "admin/dashboard";
     }
 
-    // ---- aprobaciones empresas ----
     @GetMapping("/empresas/pendientes")
     public String empresasPendientes(Model model) {
         model.addAttribute("empresas", empresaService.pendientes());
@@ -39,7 +38,6 @@ public class AdminController {
         return "redirect:/admin/empresas/pendientes";
     }
 
-    // ---- aprobaciones oferentes ----
     @GetMapping("/oferentes/pendientes")
     public String oferentesPendientes(Model model) {
         model.addAttribute("oferentes", oferenteService.pendientes());
@@ -50,18 +48,6 @@ public class AdminController {
     public String aprobarOferente(@PathVariable Integer id) {
         oferenteService.aprobar(id);
         return "redirect:/admin/oferentes/pendientes";
-    }
-
-    // ---- Características ----
-    @GetMapping("/caracteristicas")
-    public String caracteristicas(@RequestParam(required = false) Integer actualId,
-                                  Model model) {
-        model.addAttribute("raices", caracteristicaService.raices());
-        model.addAttribute("nueva", new Caracteristica());
-        if (actualId != null) {
-            model.addAttribute("actual", caracteristicaService.obtener(actualId));
-        }
-        return "admin/caracteristicas";
     }
 
     @PostMapping("/caracteristicas")
@@ -77,13 +63,38 @@ public class AdminController {
         return "redirect:/admin/caracteristicas";
     }
 
-    // ---- Reportes ----
     @GetMapping("/reportes")
     public String reporteForm() {
         return "admin/reportes";
     }
 
-    // Genera reporte PDF real (OpenPDF) y lo envía como descarga
+    @GetMapping("/caracteristicas")
+    public String caracteristicas(@RequestParam(required = false) Integer actualId,
+                                  Model model) {
+        model.addAttribute("raices", caracteristicaService.raices());
+        model.addAttribute("nueva", new Caracteristica());
+
+        if (actualId != null) {
+            Caracteristica actual = caracteristicaService.obtener(actualId);
+            model.addAttribute("actual", actual);
+            model.addAttribute("ancestros", caracteristicaService.ancestros(actual));
+
+            if (actual.getHijos() == null || actual.getHijos().isEmpty()) {
+                if (actual.getPadre() != null) {
+                    model.addAttribute("padresDisponibles", actual.getPadre().getHijos());
+                } else {
+                    model.addAttribute("padresDisponibles", caracteristicaService.raices());
+                }
+            } else {
+                model.addAttribute("padresDisponibles", actual.getHijos());
+            }
+        } else {
+            model.addAttribute("padresDisponibles", caracteristicaService.raices());
+        }
+
+        return "admin/caracteristicas";
+    }
+
     @GetMapping("/reportes/pdf")
     public void generarReporte(@RequestParam int anio,
                                @RequestParam int mes,

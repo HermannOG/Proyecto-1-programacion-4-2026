@@ -64,7 +64,6 @@
 
     <div style="max-width:520px;">
 
-        <!-- CV actual -->
         <th:block th:if="${oferente != null and oferente.curriculumPdf != null}">
             <div class="cv-card">
                 <div class="cv-icon">📄</div>
@@ -91,7 +90,6 @@
             </div>
         </th:block>
 
-        <!-- Formulario subir nuevo CV -->
         <div class="card" style="padding:24px 28px;">
             <h3 style="font-size:14px;font-weight:700;margin-bottom:16px;">
                 <span th:if="${oferente != null and oferente.curriculumPdf != null}">Reemplazar CV</span>

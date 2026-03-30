@@ -17,6 +17,9 @@ public class Administrador {
     @Column(nullable = false, length = 100)
     private String nombre;
 
+    @Column(length = 150)
+    private String correo;
+
     @Column(nullable = false, length = 255)
     private String clave;
 }

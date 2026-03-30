@@ -42,15 +42,13 @@
             <p><strong>Residencia:</strong> <span th:text="${oferente.residencia}"></span></p>
         </div>
 
-        <!-- CV -->
         <th:block th:if="${oferente.curriculumPdf != null}">
             <a th:href="@{/curriculos/{file}(file=${oferente.curriculumPdf})}"
                target="_blank" class="cv-link">
-                📄 Ver currículo (PDF)
+                 Ver currículo (PDF)
             </a>
         </th:block>
 
-        <!-- Habilidades -->
         <div class="skills-title">Habilidades</div>
         <div class="card" style="padding:0;overflow:hidden;">
             <table class="data-table">

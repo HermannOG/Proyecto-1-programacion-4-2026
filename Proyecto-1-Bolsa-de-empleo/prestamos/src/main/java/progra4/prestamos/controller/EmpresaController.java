@@ -56,6 +56,12 @@ public class EmpresaController {
         return "redirect:/empresa/puestos";
     }
 
+    @PostMapping("/puestos/{id}/activar")
+    public String activar(@PathVariable Integer id) {
+        puestoService.activar(id);
+        return "redirect:/empresa/puestos";
+    }
+
     @GetMapping("/candidatos/buscar")
     public String buscarCandidatos(@RequestParam Integer puestoId, Model model) {
         model.addAttribute("puesto", puestoService.obtener(puestoId));

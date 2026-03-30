@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class PuestoService {
     private final PuestoRepository puestoRepo;
     private final EmpresaRepository empresaRepo;
     private final CaracteristicaRepository caracRepo;
+    private final CaracteristicaService caracteristicaService;
 
     public List<Puesto> ultimos5Publicos() {
         return puestoRepo.findTop5ByEsPublicoTrueAndActivoTrueOrderByFechaRegistroDesc();
@@ -25,7 +27,8 @@ public class PuestoService {
 
     public List<Puesto> buscarPorCaracteristicas(List<Integer> ids) {
         if (ids == null || ids.isEmpty()) return puestoRepo.findByEsPublicoTrueAndActivoTrue();
-        return puestoRepo.findPublicosByCaracteristicas(ids);
+        List<Integer> idsExpandidos = caracteristicaService.expandirConDescendientes(ids);
+        return puestoRepo.findPublicosByCaracteristicas(idsExpandidos);
     }
 
     public List<Puesto> puestosDeEmpresaActual() {
@@ -52,6 +55,13 @@ public class PuestoService {
             saved.getCaracteristicas().add(pc);
         }
         puestoRepo.save(saved);
+    }
+
+    @Transactional
+    public void activar(Integer id) {
+        Puesto p = puestoRepo.findById(id).orElseThrow();
+        p.setActivo(true);
+        puestoRepo.save(p);
     }
 
     @Transactional

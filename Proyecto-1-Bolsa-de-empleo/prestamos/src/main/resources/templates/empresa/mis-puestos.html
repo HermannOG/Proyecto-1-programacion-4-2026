@@ -31,16 +31,22 @@
                 <td th:text="${p.descripcion}">Descripción</td>
                 <td style="font-family:'DM Mono',monospace;" th:text="${p.salario}">0.0</td>
                 <td>
-                    <span th:if="${p.activo}"  class="badge badge-green">Sí</span>
+                    <span th:if="${p.activo}"   class="badge badge-green">Sí</span>
                     <span th:unless="${p.activo}" class="badge badge-red">No</span>
                 </td>
                 <td>
                     <div style="display:flex;gap:8px;align-items:center;">
-                        <!-- Desactivar -->
+                        <!-- Desactivar (solo si está activo) -->
                         <form th:if="${p.activo}"
                               th:action="@{/empresa/puestos/{id}/desactivar(id=${p.id})}"
                               method="post" style="display:inline;">
                             <button type="submit" class="btn btn-danger btn-sm">Desactivar</button>
+                        </form>
+                        <!-- Activar (solo si está inactivo) -->
+                        <form th:unless="${p.activo}"
+                              th:action="@{/empresa/puestos/{id}/activar(id=${p.id})}"
+                              method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-success btn-sm">Activar</button>
                         </form>
                         <!-- Buscar candidatos -->
                         <a th:href="@{/empresa/candidatos/buscar(puestoId=${p.id})}"

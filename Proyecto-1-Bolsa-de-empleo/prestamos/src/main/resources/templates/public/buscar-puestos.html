@@ -9,15 +9,6 @@
         .tree ul { list-style: none; padding-left: 18px; }
         .tree > ul { padding-left: 0; }
         .tree li { position: relative; }
-        .tree input[type="checkbox"].toggle { display: none; }
-        .tree .toggle-label {
-            cursor: pointer;
-            font-size: 12px;
-            color: var(--accent);
-            margin-right: 4px;
-            user-select: none;
-        }
-        .tree .node-children { display: block; }
         .tree input[type="checkbox"].select-cb { margin-right: 6px; accent-color: var(--accent); }
         .tree .node-name { color: var(--text-sm); }
         .tree .parent-name { font-weight: 600; color: var(--text); }
@@ -54,12 +45,26 @@
                 <div class="tree">
                     <ul>
                         <li th:each="raiz : ${caracteristicas}" th:if="${raiz.padre == null}">
+
                             <th:block th:if="${raiz.hijos != null and !raiz.hijos.isEmpty()}">
-                                <span class="parent-name" th:text="${raiz.nombre}">Categoría</span>
+                                <label>
+                                    <input type="checkbox" class="select-cb"
+                                           name="caracteristicaIds"
+                                           th:value="${raiz.id}"
+                                           th:checked="${selectedIds != null and selectedIds.contains(raiz.id)}"/>
+                                    <span class="parent-name" th:text="${raiz.nombre}">Categoría</span>
+                                </label>
                                 <ul>
                                     <li th:each="hijo : ${raiz.hijos}">
+
                                         <th:block th:if="${hijo.hijos != null and !hijo.hijos.isEmpty()}">
-                                            <span class="parent-name" th:text="${hijo.nombre}">Subcategoría</span>
+                                            <label>
+                                                <input type="checkbox" class="select-cb"
+                                                       name="caracteristicaIds"
+                                                       th:value="${hijo.id}"
+                                                       th:checked="${selectedIds != null and selectedIds.contains(hijo.id)}"/>
+                                                <span class="parent-name" th:text="${hijo.nombre}">Subcategoría</span>
+                                            </label>
                                             <ul>
                                                 <li th:each="nieto : ${hijo.hijos}">
                                                     <label>
@@ -67,11 +72,12 @@
                                                                name="caracteristicaIds"
                                                                th:value="${nieto.id}"
                                                                th:checked="${selectedIds != null and selectedIds.contains(nieto.id)}"/>
-                                                        <span class="node-name" th:text="${nieto.nombre}">Leaf</span>
+                                                        <span class="node-name" th:text="${nieto.nombre}">Hoja</span>
                                                     </label>
                                                 </li>
                                             </ul>
                                         </th:block>
+
                                         <th:block th:if="${hijo.hijos == null or hijo.hijos.isEmpty()}">
                                             <label>
                                                 <input type="checkbox" class="select-cb"
@@ -81,9 +87,11 @@
                                                 <span class="node-name" th:text="${hijo.nombre}">Hoja</span>
                                             </label>
                                         </th:block>
+
                                     </li>
                                 </ul>
                             </th:block>
+
                             <th:block th:if="${raiz.hijos == null or raiz.hijos.isEmpty()}">
                                 <label>
                                     <input type="checkbox" class="select-cb"
@@ -93,6 +101,7 @@
                                     <span class="node-name" th:text="${raiz.nombre}">Hoja</span>
                                 </label>
                             </th:block>
+
                         </li>
                     </ul>
                 </div>
